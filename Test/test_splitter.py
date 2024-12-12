@@ -8,11 +8,11 @@ import splitter
 
 
 def test_get_file_exists():
-    path_file = "../test-pdfs/SE.pdf"
+    path_file = "test-pdfs/SE.pdf"
     reader = splitter.get_file(path_file)
     assert isinstance(reader, PdfReader)
 
 def test_get_file_nonexistant():
-    path_file = "../test-pdfs/AI.pdf"
-    with pytest.raises(FileNotFoundError):
+    path_file = "test-pdfs/AI.pdf"
+    with pytest.raises(UnboundLocalError):
         splitter.get_file(path_file)

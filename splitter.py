@@ -4,7 +4,7 @@ import os
 def get_file(file_path):
     try:
         reader = PdfReader(file_path)
-    except FileNotFoundError:
+    except UnboundLocalError:
         print(f"File at {file_path} not found")
     except:
         print("Unknown error")
