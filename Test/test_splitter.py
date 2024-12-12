@@ -27,3 +27,9 @@ def test_find_index_page_se():
     reader = splitter.get_file(path_file)
     page = splitter.find_index_page(reader)
     assert page == 12
+
+def test__find_index_page_os():
+    path_file = "test-pdfs/OS.pdf"
+    reader = splitter.get_file(path_file)
+    page = splitter.find_index_page(reader)
+    assert page == 11
