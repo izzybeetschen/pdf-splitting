@@ -51,8 +51,11 @@ def find_index_page(reader):
             if keyword in text:
                 pattern = r"\w+[\s\.\-]+\d+"    # checks pattern to ensure contents page
                 if re.search(pattern, text):
-                    return n + 1
+                    return n
 
         n += 1
 
     return None
+
+def get_page_offset(reader):
+    return offset
