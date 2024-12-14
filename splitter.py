@@ -53,7 +53,7 @@ def find_index_page(reader):
                 if re.search(pattern, text):
                     return n
 
-        n += 1
+        n += 1      #increment n
 
     return None
 
@@ -100,3 +100,6 @@ def get_page_offset(reader):
             offset = n - (int(top_text) - 1)
             return offset
     return offset
+
+def find_chapter_pages(reader, contents, offset):
+    pass
