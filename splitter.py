@@ -118,7 +118,7 @@ def find_chapter_pages(reader, contents, offset):
     current_page = contents
     pattern = r"^(?:Chapter\s*)?(\d+)[^\d\n]*\s+(\d+)$"
 
-    while current_page <= len(reader.pages):
+    while current_page < len(reader.pages):
         page = reader.pages[current_page]
         text = page.extract_text()
 
@@ -128,14 +128,27 @@ def find_chapter_pages(reader, contents, offset):
         
         lines = text.splitlines()
         chapter_found = False
+        combined_line = " "
 
-        for line in lines:
+        for i, line in enumerate(lines):
+            combined_line += " " + line.strip()
             match = re.search(pattern, line.strip())
             if match:
                 chapter_found = True
                 chapter_no, chapter_page = match.groups()
                 chapter_page = int(chapter_page) + int(offset)
                 chapters.update({str(chapter_no): str(chapter_page)})
+
+                combined_line = " "
+            elif i + 1 < len(lines):
+                combined_line = line + " " + lines[i + 1].strip()
+                match = re.search(pattern, combined_line)
+                if match:
+                    chapter_found = True
+                    chapter_no, chapter_page = match.groups()
+                    chapter_page = int(chapter_page) + int(offset)
+                    chapters.update({str(chapter_no): str(chapter_page)})
+
 
         if not chapter_found:
             break
