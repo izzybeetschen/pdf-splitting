@@ -58,6 +58,19 @@ def find_index_page(reader):
     return None
 
 def get_page_offset(reader):
+    """
+    Calculates the difference between pypdf page numbers and page numbers on textbook pages
+
+    Args:
+        reader (PdfReader): a variable containing the textbook file
+
+    Returns:
+        int or None:
+            returns the offset value or None if it cannot be found
+    
+    Raises:
+        IndexError: raised if no text is found on the given page
+    """
     offset = None
     for n in range(len(reader.pages)):
         page = reader.pages[n]
@@ -69,22 +82,21 @@ def get_page_offset(reader):
         except IndexError:
             bottom_text = "No text found"
         
-        if bottom_text == 1:
+        if bottom_text == "1":
             offset = n
             return offset
-        elif bottom_text in ["1", "2", "3", "4", "5"]:
+        elif bottom_text in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
             offset = n - int(bottom_text)
             return offset
         
         try:
             top_text = next((line.strip() for line in lines if line.strip() != "ptg8286261"), "None")
-            # top_text = lines[0].strip()
         except IndexError:
-            top_text = "Error"
+            top_text = "No text found"
         if top_text == "1":
             offset = n
             return offset
-        elif top_text in ["1", "2", "3", "4", "5"]:
+        elif top_text in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
             offset = n - (int(top_text) - 1)
             return offset
     return offset
