@@ -58,6 +58,31 @@ def test_find_chapter_pages_se():
     offset = splitter.get_page_offset(reader)
     page = splitter.find_index_page(reader)
     chapters = splitter.find_chapter_pages(reader, page, offset)
+    assert chapters == {
+        "1": str(1 + offset),
+        "2": str(13 + offset),
+        "3": str(29 + offset),
+        "4": str(61 + offset),
+        "5": str(79 + offset),
+        "6": str(99 + offset),
+        "7": str(119 + offset),
+        "8": str(139 + offset),
+        "9": str(165 + offset),
+        "10": str(185 + offset),
+        "11": str(195 + offset),
+        "12": str(213 + offset),
+        "13": str(225 + offset),
+        "14": str(247 + offset),
+        "15": str(257 + offset),
+        "16": str(267 + offset),
+        "17": str(287 + offset),
+        "18": str(307 + offset),
+        "19": str(335 + offset),
+        "20": str(347 + offset),
+        "21": str(363 + offset),
+        "22": str(375 + offset),
+        "23": str(395 + offset)
+    }
 
 def test_find_chapter_pages_ds():
     path_file = "test-pdfs/DS.pdf"
@@ -65,6 +90,29 @@ def test_find_chapter_pages_ds():
     offset = splitter.get_page_offset(reader)
     page = splitter.find_index_page(reader)
     chapters = splitter.find_chapter_pages(reader, page, offset)
+    assert chapters == {
+        "1": str(17 + offset),
+        "2": str(53 + offset),
+        "3": str(97 + offset),
+        "4": str(161 + offset),
+        "5": str(201 + offset),
+        "6": str(245 + offset),
+        "7": str(295 + offset),
+        "8": str(351 + offset),
+        "9": str(397 + offset),
+        "10": str(439 + offset),
+        "11": str(479 + offset),
+        "12": str(537 + offset),
+        "13": str(581 + offset),
+        "14": str(611 + offset),
+        "15": str(645 + offset),
+        "16": str(691 + offset),
+        "17": str(743 + offset),
+        "18": str(781 + offset),
+        "19": str(833 + offset),
+        "20": str(897 + offset),
+        "21": str(931 + offset)
+    }
 
 def test_find_chapter_pages_os():
     path_file = "test-pdfs/OS.pdf"
