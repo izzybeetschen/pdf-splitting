@@ -58,4 +58,33 @@ def find_index_page(reader):
     return None
 
 def get_page_offset(reader):
+    offset = None
+    for n in range(len(reader.pages)):
+        page = reader.pages[n]
+        page_text = page.extract_text()
+        lines = page_text.splitlines()
+
+        try:
+            bottom_text = lines[-1].strip()
+        except IndexError:
+            bottom_text = "No text found"
+        
+        if bottom_text == 1:
+            offset = n
+            return offset
+        elif bottom_text in ["1", "2", "3", "4", "5"]:
+            offset = n - int(bottom_text)
+            return offset
+        
+        try:
+            top_text = next((line.strip() for line in lines if line.strip() != "ptg8286261"), "None")
+            # top_text = lines[0].strip()
+        except IndexError:
+            top_text = "Error"
+        if top_text == "1":
+            offset = n
+            return offset
+        elif top_text in ["1", "2", "3", "4", "5"]:
+            offset = n - (int(top_text) - 1)
+            return offset
     return offset

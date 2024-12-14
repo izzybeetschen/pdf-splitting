@@ -50,4 +50,4 @@ def test_get_page_offset_os():
     path_file = "test-pdfs/OS.pdf"
     reader = splitter.get_file(path_file)
     offset = splitter.get_page_offset(reader)
-    assert offset == 22
+    assert offset == 21

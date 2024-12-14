@@ -4,3 +4,5 @@ venv/
 env/
 ENV/
 test-pdfs/.DS_Store
+/__pycache__
+/Test/__pycache__
