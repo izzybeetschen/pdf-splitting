@@ -131,18 +131,24 @@ def find_chapter_pages(reader, contents, offset):
         combined_line = " "
 
         for i, line in enumerate(lines):
-            combined_line += " " + line.strip()
-            match = re.search(pattern, line.strip())
+            line = line.strip()
+            normalized_line = re.sub(r'\s+', ' ', line)
+            normalized_line = re.sub(r'(\d)([A-Za-z])', r'\1 \2', normalized_line)
+            normalized_line = re.sub(r'([A-Za-z])(\d)$', r'\1 \2', normalized_line)
+            normalized_line = re.sub(r'(\d)\s+(\d)', r'\1\2', normalized_line)
+            match = re.search(pattern, normalized_line)
             if match:
                 chapter_found = True
                 chapter_no, chapter_page = match.groups()
                 chapter_page = int(chapter_page) + int(offset)
                 chapters.update({str(chapter_no): str(chapter_page)})
-
-                combined_line = " "
             elif i + 1 < len(lines):
                 combined_line = line + " " + lines[i + 1].strip()
-                match = re.search(pattern, combined_line)
+                normalized_line = re.sub(r'\s+', ' ', combined_line)
+                normalized_line = re.sub(r'(\d)([A-Za-z])', r'\1 \2', normalized_line)
+                normalized_line = re.sub(r'([A-Za-z])(\d)$', r'\1 \2', normalized_line)
+                normalized_line = re.sub(r'(\d)\s+(\d)', r'\1\2', normalized_line)
+                match = re.search(pattern, normalized_line)
                 if match:
                     chapter_found = True
                     chapter_no, chapter_page = match.groups()
