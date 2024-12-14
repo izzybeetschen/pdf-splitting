@@ -132,23 +132,31 @@ def find_chapter_pages(reader, contents, offset):
 
         for i, line in enumerate(lines):
             line = line.strip()
+            # normalises the text in case of bad image reading
             normalized_line = re.sub(r'\s+', ' ', line)
             normalized_line = re.sub(r'(\d)([A-Za-z])', r'\1 \2', normalized_line)
             normalized_line = re.sub(r'([A-Za-z])(\d)$', r'\1 \2', normalized_line)
             normalized_line = re.sub(r'(\d)\s+(\d)', r'\1\2', normalized_line)
+
             match = re.search(pattern, normalized_line)
+
             if match:
                 chapter_found = True
                 chapter_no, chapter_page = match.groups()
                 chapter_page = int(chapter_page) + int(offset)
                 chapters.update({str(chapter_no): str(chapter_page)})
+
+            # allows multi line reading incase title spans two lines
             elif i + 1 < len(lines):
                 combined_line = line + " " + lines[i + 1].strip()
+                # normalises the text in case of bad image reading
                 normalized_line = re.sub(r'\s+', ' ', combined_line)
                 normalized_line = re.sub(r'(\d)([A-Za-z])', r'\1 \2', normalized_line)
                 normalized_line = re.sub(r'([A-Za-z])(\d)$', r'\1 \2', normalized_line)
                 normalized_line = re.sub(r'(\d)\s+(\d)', r'\1\2', normalized_line)
+
                 match = re.search(pattern, normalized_line)
+                
                 if match:
                     chapter_found = True
                     chapter_no, chapter_page = match.groups()
@@ -159,6 +167,6 @@ def find_chapter_pages(reader, contents, offset):
         if not chapter_found:
             break
 
-        current_page += 1
+        current_page += 1       # moves to next page
 
     return chapters
