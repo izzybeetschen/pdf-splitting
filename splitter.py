@@ -81,6 +81,7 @@ def get_page_offset(reader):
             bottom_text = lines[-1].strip()
         except IndexError:
             bottom_text = "No text found"
+            continue
         
         if bottom_text == "1":
             offset = n
@@ -102,4 +103,43 @@ def get_page_offset(reader):
     return offset
 
 def find_chapter_pages(reader, contents, offset):
-    pass
+    """
+    Finds the page number for the start of each chapter in the textbook
+
+    Args: 
+        reader (PdfReader): a variable containing the textbook file
+        contents (int): a variable containing the page number of the index file
+        offset (int): a variable representing the difference between the PDF page numbers and actual page numbers
+
+    Returns:
+        dict: a dictionary containing each chapter and the corresponding page number
+    """
+    chapters = {}
+    current_page = contents
+    pattern = r"^(?:Chapter\s*)?(\d+)[^\d\n]*\s+(\d+)$"
+
+    while current_page <= len(reader.pages):
+        page = reader.pages[current_page]
+        text = page.extract_text()
+
+        if not text:
+            current_page += 1
+            continue
+        
+        lines = text.splitlines()
+        chapter_found = False
+
+        for line in lines:
+            match = re.search(pattern, line.strip())
+            if match:
+                chapter_found = True
+                chapter_no, chapter_page = match.groups()
+                chapter_page = int(chapter_page) + int(offset)
+                chapters.update({str(chapter_no): str(chapter_page)})
+
+        if not chapter_found:
+            break
+
+        current_page += 1
+
+    return chapters
