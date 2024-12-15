@@ -180,6 +180,7 @@ def find_chapter_pages(reader, contents, offset):
     return chapters
 
 def split_by_chaper(reader, chapter):
+
     chapter_list = sorted((int(key), int(value)) for key, value in chapter.items())
     for i, (chapter_number, start_page) in enumerate(chapter_list):
         writer = PdfWriter()
@@ -195,3 +196,11 @@ def split_by_chaper(reader, chapter):
         output_file = f'chapter{chapter_number}.pdf'
         with open(output_file, 'wb') as out:
             writer.write(out)
+
+def main():
+    file_path = "test-pdfs/SE.pdf"
+    reader = get_file(file_path)
+    contents = find_index_page(reader)
+    offset = get_page_offset(reader)
+    chapter = find_chapter_pages(reader, contents, offset)
+    split_by_chaper(reader, chapter)
