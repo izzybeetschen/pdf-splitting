@@ -17,7 +17,7 @@ def get_file(file_path):
         UnboundLocalError: raised if the file is not found
     """
     reader = None
-    
+
     try:
         reader = PdfReader(file_path)
     except UnboundLocalError:
@@ -180,4 +180,18 @@ def find_chapter_pages(reader, contents, offset):
     return chapters
 
 def split_by_chaper(reader, chapter):
-    pass
+    chapter_list = sorted((int(key), int(value)) for key, value in chapter.items())
+    for i, (chapter_number, start_page) in enumerate(chapter_list):
+        writer = PdfWriter()
+
+        if i + 1 < len(reader.pages):
+            end_page = chapter_list[i+1][1]
+        else:
+            end_page = len(reader.pages)
+
+        for page_num in range(start_page, end_page):
+            writer.add_page(reader.pages[page_num - 1])
+
+        output_file = f'chapter{chapter_number}.pdf'
+        with open(output_file, 'wb') as out:
+            writer.write(out)
