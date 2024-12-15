@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/styles.css">
     <title>PDF Splitter</title>
 </head>
 <body>
-    <h1>Upload PDF to Split by Chapters</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".pdf" required>
-        <button type="submit">Upload and Split</button>
-    </form>
+    <div class="main-text">
+        <h1>Textbook Splitter</h1>
+        <p>
+            Upload a pdf of a textbook and the program will split it up into a new PDF for each chapter. This will then be downloaded.
+        </p>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".pdf" required>
+            <button type="submit">Upload and Split</button>
+        </form>
+    </div>
 </body>
 </html>

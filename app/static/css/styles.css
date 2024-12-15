@@ -1,0 +1,10 @@
+body {
+    background-color: grey;
+}
+
+.main-text {
+    width: 30%;
+    margin: 0 auto;
+    background-color: white;
+    margin-top: 10%;
+}
