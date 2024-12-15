@@ -14,8 +14,8 @@ def test_get_file_exists():
 
 def test_get_file_nonexistant():
     path_file = "test-pdfs/AI.pdf"
-    with pytest.raises(UnboundLocalError):
-        splitter.get_file(path_file)
+    reader = splitter.get_file(path_file)
+    assert reader is None
 
 def test_get_file_not_pdf():
     path_file = "test-pdfs/x.txt"

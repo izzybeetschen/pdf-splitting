@@ -2,6 +2,8 @@ from pypdf import *
 from pypdf.errors import *
 import os
 import re
+from io import BytesIO
+import zipfile
 
 def get_file(file_path):
     """
@@ -20,15 +22,15 @@ def get_file(file_path):
 
     try:
         reader = PdfReader(file_path)
-    except UnboundLocalError:
-        print(f"File at {file_path} not found")
     except PdfReadError:
         print("Invalid PDF file")
-    except:
-        print("Unknown error")
+    except FileNotFoundError:
+        print("File not found")
+    # except:
+    #     print("Unknown error")
 
     if not reader:
-        raise PdfReadError
+        return None
     return reader
 
 def find_index_page(reader):
@@ -179,31 +181,44 @@ def find_chapter_pages(reader, contents, offset):
 
     return chapters
 
-def split_by_chaper(reader, chapter):
-    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "Practice-output")
+def split_by_chapter(reader, chapter):
+    """
+    Splits the textbook into a pdf file per chapter
 
-    chapter_list = sorted((int(key), int(value)) for key, value in chapter.items())
-    for i, (chapter_number, start_page) in enumerate(chapter_list):
-        writer = PdfWriter()
+    Args:
+        reader (PdfReader): a variable containing the textbook
+        chapter (dict): a dictionary containing key value pairs chapter: page
+    """
+    zip_buffer = BytesIO()  # Fix: Properly initialize BytesIO object
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        chapter_list = sorted((int(key), int(value)) for key, value in chapter.items())
 
-        if i + 1 < len(chapter_list):
-            end_page = chapter_list[i+1][1]
-        else:
-            end_page = len(reader.pages)
+        for i, (chapter_number, start_page) in enumerate(chapter_list):
+            writer = PdfWriter()
 
-        for page_num in range(start_page, end_page):
-            writer.add_page(reader.pages[page_num - 1])
+            if i + 1 < len(chapter_list):
+                end_page = chapter_list[i + 1][1]
+            else:
+                end_page = len(reader.pages) + 1
 
-        output_file = os.path.join(desktop_path, f'chapter{chapter_number}.pdf')
-        with open(output_file, 'wb') as out:
-            writer.write(out)
+            for page_num in range(start_page, end_page):
+                writer.add_page(reader.pages[page_num - 1])
 
-def main():
-    file_path = "test-pdfs/SE.pdf"
-    reader = get_file(file_path)
-    contents = find_index_page(reader)
-    offset = get_page_offset(reader)
-    chapter = find_chapter_pages(reader, contents, offset)
-    split_by_chaper(reader, chapter)
+            # Write PDF to buffer
+            pdf_buffer = BytesIO()
+            writer.write(pdf_buffer)
+            pdf_buffer.seek(0)
 
-main()
+            # Add PDF to ZIP
+            zip_file.writestr(f'chapter_{chapter_number}.pdf', pdf_buffer.read())
+
+    zip_buffer.seek(0)  # Reset pointer for sending
+    return zip_buffer
+
+# def main():
+#     file_path = "test-pdfs/SE.pdf"
+#     reader = get_file(file_path)
+#     contents = find_index_page(reader)
+#     offset = get_page_offset(reader)
+#     chapter = find_chapter_pages(reader, contents, offset)
+#     split_by_chaper(reader, chapter)
