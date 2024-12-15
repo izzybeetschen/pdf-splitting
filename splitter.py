@@ -180,12 +180,13 @@ def find_chapter_pages(reader, contents, offset):
     return chapters
 
 def split_by_chaper(reader, chapter):
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "Practice-output")
 
     chapter_list = sorted((int(key), int(value)) for key, value in chapter.items())
     for i, (chapter_number, start_page) in enumerate(chapter_list):
         writer = PdfWriter()
 
-        if i + 1 < len(reader.pages):
+        if i + 1 < len(chapter_list):
             end_page = chapter_list[i+1][1]
         else:
             end_page = len(reader.pages)
@@ -193,7 +194,7 @@ def split_by_chaper(reader, chapter):
         for page_num in range(start_page, end_page):
             writer.add_page(reader.pages[page_num - 1])
 
-        output_file = f'chapter{chapter_number}.pdf'
+        output_file = os.path.join(desktop_path, f'chapter{chapter_number}.pdf')
         with open(output_file, 'wb') as out:
             writer.write(out)
 
@@ -204,3 +205,5 @@ def main():
     offset = get_page_offset(reader)
     chapter = find_chapter_pages(reader, contents, offset)
     split_by_chaper(reader, chapter)
+
+main()
