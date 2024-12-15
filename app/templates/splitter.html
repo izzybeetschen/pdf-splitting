@@ -8,14 +8,21 @@
 </head>
 <body>
     <div class="main-text">
-        <h1>Textbook Splitter</h1>
-        <p>
-            Upload a pdf of a textbook and the program will split it up into a new PDF for each chapter. This will then be downloaded.
+        <h1 id="title">Textbook Splitter</h1>
+        <p id="explanation">
+            Upload a PDF of a textbook and the program will split it up into a new PDF for each chapter. This will then be downloaded.
         </p>
         <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".pdf" required>
-            <button type="submit">Upload and Split</button>
+            <div class="input-sect">
+                <div id="upload-div">
+                    <input id="upload" type="file" name="file" accept=".pdf" required>
+                </div>
+                <button id="submit" type="submit">Upload and Split</button>
+            </div>
         </form>
+        <p>
+            If you encounter any errors please leave an issue <a href="https://github.com/izzybeetschen/pdf-splitting/issues">here</a>
+        </p>
     </div>
 </body>
 </html>
