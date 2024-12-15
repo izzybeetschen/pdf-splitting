@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
 from pypdf import PdfReader
+from pypdf.errors import *
 import splitter
 
 def test_get_file_exists():
@@ -14,6 +15,11 @@ def test_get_file_exists():
 def test_get_file_nonexistant():
     path_file = "test-pdfs/AI.pdf"
     with pytest.raises(UnboundLocalError):
+        splitter.get_file(path_file)
+
+def test_get_file_not_pdf():
+    path_file = "test-pdfs/x.txt"
+    with pytest.raises(PdfReadError):
         splitter.get_file(path_file)
 
 def test_find_index_page_ds():

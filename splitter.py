@@ -1,4 +1,5 @@
 from pypdf import *
+from pypdf.errors import *
 import os
 import re
 
@@ -15,12 +16,19 @@ def get_file(file_path):
     Raises:
         UnboundLocalError: raised if the file is not found
     """
+    reader = None
+    
     try:
         reader = PdfReader(file_path)
     except UnboundLocalError:
         print(f"File at {file_path} not found")
+    except PdfReadError:
+        print("Invalid PDF file")
     except:
         print("Unknown error")
+
+    if not reader:
+        raise PdfReadError
     return reader
 
 def find_index_page(reader):
@@ -170,3 +178,6 @@ def find_chapter_pages(reader, contents, offset):
         current_page += 1       # moves to next page
 
     return chapters
+
+def split_by_chaper(reader, chapter):
+    pass
