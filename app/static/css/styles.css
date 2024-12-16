@@ -1,7 +1,19 @@
-body {
-    background-color: grey;
+* {
     font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
 }
+
+h1 {
+    font-size: 30px;
+}
+
+body {
+    background-color: #A8B6BF;
+}
+
 .outer {
     display: table;
     position: absolute;
@@ -18,10 +30,11 @@ body {
 
 .main-text {
     width: 466px;
-    background-color: white;
+    background-color: #EBEFF2;
     margin-left: auto;
     margin-right: auto;
     padding: 20px;
+    border-radius: 2px;
 }
 
 .input-sect {
@@ -30,12 +43,39 @@ body {
     text-align: center;
 }
 
-.issue-div {
+.custom-button {
+    display: inline-block;
+    border-right: solid;
+    border-width: 1px;
+    border-color: black;
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+    width: 91px;
+    text-align: center;
+    background-color: #A8B6BF;
+}
 
+button {
+    display: inline-block;
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+    width: 149px;
+    text-align: center;
+    background-color: #A8B6BF;
+    border-radius: 4px;
+}
+
+.issue-div {
 }
 
 #title {
     text-align: center;
+    font-size: 30px;
 }
 
 #explanation {
@@ -54,11 +94,14 @@ body {
 
 #upload-div {
     border-style: solid;
-    border-width: 2px;
+    border-width: 1px;
     border-color: black;
     width: 100%;
     text-align: left;
     border-radius: 4px;
+    height: 32px;
+    font-size: 14px;
+    margin-bottom: 35px;
 }
 
 #issue-text {
