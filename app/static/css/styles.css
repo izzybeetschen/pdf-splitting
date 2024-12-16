@@ -6,6 +6,13 @@
     font-size: 14px;
 }
 
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px; 
+}
+
 h1 {
     font-size: 30px;
 }
@@ -85,6 +92,10 @@ a:active {
 
 .issue-div {
     text-align: center;
+}
+
+.home {
+    width: 50px;
 }
 
 #title {
