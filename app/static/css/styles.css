@@ -14,6 +14,32 @@ body {
     background-color: #A8B6BF;
 }
 
+button {
+    display: inline-block;
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+    width: 149px;
+    text-align: center;
+    background-color: #A8B6BF;
+    border-radius: 4px;
+}
+
+a:link, a:visited {
+    color: black;
+}
+
+a:hover {
+    color: #2D3940
+}
+
+a:active {
+    color: #A8B6BF;
+}
+
 .outer {
     display: table;
     position: absolute;
@@ -55,20 +81,6 @@ body {
     width: 91px;
     text-align: center;
     background-color: #A8B6BF;
-}
-
-button {
-    display: inline-block;
-    border: solid;
-    border-width: 1px;
-    border-color: black;
-    height: 32px;
-    line-height: 32px;
-    font-size: 14px;
-    width: 149px;
-    text-align: center;
-    background-color: #A8B6BF;
-    border-radius: 4px;
 }
 
 .issue-div {
