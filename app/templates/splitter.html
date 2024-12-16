@@ -4,26 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <title>PDF Splitter</title>
 </head>
 <body>
-    <div class="main-text">
-        <h1 id="title">Textbook Splitter</h1>
-        <p id="explanation">
-            Upload a PDF of a textbook and the program will split it up into a new PDF for each chapter. This will then be downloaded.
-        </p>
-        <form method="POST" enctype="multipart/form-data">
-            <div class="input-sect">
-                <div id="upload-div">
-                    <input id="upload" type="file" name="file" accept=".pdf" required>
+    <div class="outer">
+        <div class="middle">
+            <div class="main-text">
+                <h1 id="title">Textbook Splitter</h1>
+                <p id="explanation">
+                    Upload a textbook PDF and the application will create a new PDF for each chapter of the textbook, 
+                    containing that chapter's content. You will be able to find these PDFs in a zip file called 'split_chapters.zip' in your downloads folder.
+                </p>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="input-sect">
+                        <div id="upload-div">
+                            <input id="upload" type="file" name="file" accept=".pdf" required>
+                        </div>
+                        <button id="submit" type="submit">Upload and Split</button>
+                    </div>
+                </form>
+                <div class="issue-div">
+                    <p id="issue-text">
+                        If you encounter any errors please leave an issue <a href="https://github.com/izzybeetschen/pdf-splitting/issues">here</a>
+                    </p>
                 </div>
-                <button id="submit" type="submit">Upload and Split</button>
             </div>
-        </form>
-        <div class="issue-div">
-            <p id="issue-text">
-                If you encounter any errors please leave an issue <a href="https://github.com/izzybeetschen/pdf-splitting/issues">here</a>
-            </p>
         </div>
     </div>
 </body>

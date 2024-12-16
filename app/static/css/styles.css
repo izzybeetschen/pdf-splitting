@@ -1,12 +1,26 @@
 body {
     background-color: grey;
+    font-family: "Inter", sans-serif;
 }
+.outer {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .middle {
+    display: table-cell;
+    vertical-align: middle;
+  }
 
 .main-text {
-    width: 30%;
-    margin: 0 auto;
+    width: 466px;
     background-color: white;
-    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
     padding: 20px;
 }
 
@@ -28,6 +42,10 @@ body {
     text-align: center;
 }
 
+#upload {
+    border-radius: 4px;
+}
+
 #submit {
     display: block;
     margin: 0 auto; 
@@ -40,9 +58,9 @@ body {
     border-color: black;
     width: 100%;
     text-align: left;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 #issue-text {
-    
+
 }
