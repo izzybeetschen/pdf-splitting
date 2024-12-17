@@ -53,6 +53,11 @@ def splitter():
         except Exception as e:
             # Handle unexpected errors gracefully
             return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+        
+        finally:
+            # Ensure the uploaded file is deleted
+            if file_path and os.path.exists(file_path):
+                os.remove(file_path)
 
     # Render the upload form for GET requests
     return render_template('splitter.html')
