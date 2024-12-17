@@ -26,8 +26,6 @@ def get_file(file_path):
         print("Invalid PDF file")
     except FileNotFoundError:
         print("File not found")
-    # except:
-    #     print("Unknown error")
 
     if not reader:
         return None
@@ -45,13 +43,15 @@ def find_index_page(reader):
             returns the page number containing the contents page or None if no contents page is found
 
     """
+    # keywords used to search for the contents page
     keywords = [
         'contents',
         'table of contents'
     ]
 
-    n = 0
+    n = 0       # current page
 
+    # loop through the textbook until found keyword and the page matches the pattern
     while n < len(reader.pages):
         page = reader.pages[n]
         text = page.extract_text()
@@ -65,6 +65,7 @@ def find_index_page(reader):
 
         n += 1      #increment n
 
+    # if no index page found, return none
     return None
 
 def get_page_offset(reader):
@@ -82,28 +83,35 @@ def get_page_offset(reader):
         IndexError: raised if no text is found on the given page
     """
     offset = None
+    # loop through all the pages in the textbook
     for n in range(len(reader.pages)):
         page = reader.pages[n]
         page_text = page.extract_text()
         lines = page_text.splitlines()
 
+        # read the bottom line of text on the page
         try:
             bottom_text = lines[-1].strip()
         except IndexError:
             bottom_text = "No text found"
             continue
         
+        # if the text says 1, the offset is the page number we're on 0-indexed
         if bottom_text == "1":
             offset = n
             return offset
+        # checks to ensure the page isn't past 1, calculates offset from this value
         elif bottom_text in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
             offset = n - int(bottom_text)
             return offset
         
+        # reads the top line of text on the page, removing hidden text
         try:
             top_text = next((line.strip() for line in lines if line.strip() != "ptg8286261"), "None")
         except IndexError:
             top_text = "No text found"
+
+        # if the text says 1, the offset is again the current page number
         if top_text == "1":
             offset = n
             return offset
@@ -124,9 +132,9 @@ def find_chapter_pages(reader, contents, offset):
     Returns:
         dict: a dictionary containing each chapter and the corresponding page number
     """
-    chapters = {}
-    current_page = contents
-    pattern = r"^(?:Chapter\s*)?(\d+)[^\d\n]*\s+(\d+)$"
+    chapters = {}       # empty dictionary to contain the chapter and page numbers
+    current_page = contents     # sets the current page
+    pattern = r"^(?:Chapter\s*)?(\d+)[^\d\n]*\s+(\d+)$"     # chapter number pattern
 
     while current_page < len(reader.pages):
         page = reader.pages[current_page]
@@ -183,24 +191,32 @@ def find_chapter_pages(reader, contents, offset):
 
 def split_by_chapter(reader, chapter):
     """
-    Splits the textbook into a pdf file per chapter
+    Splits the textbook into a pdf file per chapter, exports a zip file containing the chapters
 
     Args:
         reader (PdfReader): a variable containing the textbook
         chapter (dict): a dictionary containing key value pairs chapter: page
+
+    Returns:
+        BytesIO: An in-memory binary stream containing the zip file
     """
-    zip_buffer = BytesIO()  # Fix: Properly initialize BytesIO object
+    zip_buffer = BytesIO()      # initialise BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
         chapter_list = sorted((int(key), int(value)) for key, value in chapter.items())
 
+        # creates a new PDF for each chapter in the textbook
         for i, (chapter_number, start_page) in enumerate(chapter_list):
+            # create a PDF writer
             writer = PdfWriter()
 
+            # if the chapter is not the final chapter, find the page the chapter ends on
             if i + 1 < len(chapter_list):
                 end_page = chapter_list[i + 1][1]
+            # if it is, the end page is the end of the textbook
             else:
                 end_page = len(reader.pages) + 1
 
+            # add each page of the chapter to the PDF
             for page_num in range(start_page, end_page):
                 writer.add_page(reader.pages[page_num - 1])
 
@@ -212,7 +228,7 @@ def split_by_chapter(reader, chapter):
             # Add PDF to ZIP
             zip_file.writestr(f'chapter_{chapter_number}.pdf', pdf_buffer.read())
 
-    zip_buffer.seek(0)  # Reset pointer for sending
+    zip_buffer.seek(0) 
     return zip_buffer
 
 # def main():
