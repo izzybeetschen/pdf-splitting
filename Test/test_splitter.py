@@ -3,9 +3,11 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 from pypdf.errors import *
 import splitter
+import zipfile
+from io import BytesIO
 
 def test_get_file_exists():
     path_file = "test-pdfs/SE.pdf"
@@ -19,7 +21,7 @@ def test_get_file_nonexistant():
 
 def test_get_file_not_pdf():
     path_file = "test-pdfs/x.txt"
-    with pytest.raises(PdfReadError):
+    with pytest.raises(ValueError):
         splitter.get_file(path_file)
 
 def test_find_index_page_ds():
@@ -179,3 +181,86 @@ def test_find_chapter_pages_os():
         "50": str(639 + offset),
         "51": str(653 + offset)
     }
+
+# Mock PDF creation helper
+def create_mock_pdf(page_count):
+    """Creates a mock PDF with the specified number of pages."""
+    writer = PdfWriter()
+    for i in range(page_count):
+        writer.add_blank_page(width=72, height=72)  # Add blank pages
+    pdf_buffer = BytesIO()
+    writer.write(pdf_buffer)
+    pdf_buffer.seek(0)
+    return pdf_buffer
+
+# Test 1: Valid chapter split
+def test_split_by_chapter_valid():
+    pdf_buffer = create_mock_pdf(10)  # Create a 10-page mock PDF
+    reader = PdfReader(pdf_buffer)
+    chapters = {
+        "1": "1",
+        "2": "4",
+        "3": "7"
+    }
+    
+    zip_buffer = splitter.split_by_chapter(reader, chapters)
+    assert isinstance(zip_buffer, BytesIO)
+
+    # Check contents of the ZIP
+    with zipfile.ZipFile(zip_buffer, 'r') as zip_file:
+        files = zip_file.namelist()
+        assert "chapter_1.pdf" in files
+        assert "chapter_2.pdf" in files
+        assert "chapter_3.pdf" in files
+        assert len(files) == 3
+
+# Test 2: Single chapter covering all pages
+def test_split_by_chapter_single_chapter():
+    pdf_buffer = create_mock_pdf(5)  # Create a 5-page mock PDF
+    reader = PdfReader(pdf_buffer)
+    chapters = {
+        "1": "1"
+    }
+    
+    zip_buffer = splitter.split_by_chapter(reader, chapters)
+    assert isinstance(zip_buffer, BytesIO)
+
+    with zipfile.ZipFile(zip_buffer, 'r') as zip_file:
+        files = zip_file.namelist()
+        assert "chapter_1.pdf" in files
+        assert len(files) == 1
+
+# Test 3: Empty chapter input
+def test_split_by_chapter_empty_chapters():
+    pdf_buffer = create_mock_pdf(5)
+    reader = PdfReader(pdf_buffer)
+    chapters = {}
+    
+    zip_buffer = splitter.split_by_chapter(reader, chapters)
+    assert isinstance(zip_buffer, BytesIO)
+
+    with zipfile.ZipFile(zip_buffer, 'r') as zip_file:
+        files = zip_file.namelist()
+        assert len(files) == 0  # No chapters, no files
+
+# Test 4: Invalid chapter input (non-numeric pages)
+def test_split_by_chapter_invalid_chapters():
+    pdf_buffer = create_mock_pdf(5)
+    reader = PdfReader(pdf_buffer)
+    chapters = {
+        "1": "a",  # Invalid page number
+        "2": "4"
+    }
+    
+    with pytest.raises(ValueError):
+        splitter.split_by_chapter(reader, chapters)
+
+def test_split_by_chapter_invalid_page_range():
+    pdf_buffer = create_mock_pdf(5)
+    reader = PdfReader(pdf_buffer)
+    chapters = {
+        "1": "8"  # Beyond total pages
+    }
+    
+    with pytest.raises(IndexError):
+        splitter.split_by_chapter(reader, chapters)

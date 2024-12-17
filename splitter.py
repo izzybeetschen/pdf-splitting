@@ -20,6 +20,9 @@ def get_file(file_path):
     """
     reader = None
 
+    if not file_path.endswith('.pdf'):
+        raise ValueError
+
     try:
         reader = PdfReader(file_path)
     except PdfReadError:
@@ -29,6 +32,7 @@ def get_file(file_path):
 
     if not reader:
         return None
+    
     return reader
 
 def find_index_page(reader):
@@ -136,6 +140,7 @@ def find_chapter_pages(reader, contents, offset):
     current_page = contents     # sets the current page
     pattern = r"^(?:Chapter\s*)?(\d+)[^\d\n]*\s+(\d+)$"     # chapter number pattern
 
+    # loops through each page of the 
     while current_page < len(reader.pages):
         page = reader.pages[current_page]
         text = page.extract_text()
@@ -181,7 +186,7 @@ def find_chapter_pages(reader, contents, offset):
                     chapter_page = int(chapter_page) + int(offset)
                     chapters.update({str(chapter_no): str(chapter_page)})
 
-
+        # if no chapter info found on the current page, assume contents section is finished
         if not chapter_found:
             break
 
@@ -206,6 +211,10 @@ def split_by_chapter(reader, chapter):
 
         # creates a new PDF for each chapter in the textbook
         for i, (chapter_number, start_page) in enumerate(chapter_list):
+            # checks to ensure the start page is valid
+            if start_page >= len(reader.pages):
+                raise IndexError
+            
             # create a PDF writer
             writer = PdfWriter()
 
