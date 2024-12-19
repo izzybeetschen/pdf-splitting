@@ -117,14 +117,15 @@ a:active {
     text-align: center;  
 }
 
-#upload-div {
-    border-style: solid;
+#upload-button::-webkit-file-upload-button {
+    display: inline-block;
+    border-right: solid;
     border-width: 1px;
     border-color: black;
-    width: 100%;
-    text-align: left;
-    border-radius: 4px;
     height: 32px;
+    line-height: 32px;
     font-size: 14px;
-    margin-bottom: 35px;
+    width: 91px;
+    text-align: center;
+    background-color: #A8B6BF;
 }

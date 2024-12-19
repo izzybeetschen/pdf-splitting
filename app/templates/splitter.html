@@ -10,11 +10,6 @@
     <title>PDF Splitter</title>
 </head>
 <body>
-    <header>
-        <a href="izzybeetschen.com">
-            <img src="../static/images/home.png" alt="Home" class="home">
-        </a>
-    </header>
     <div class="outer">
         <div class="middle">
             <div class="main-text">
@@ -26,20 +21,7 @@
                 <form method="POST" enctype="multipart/form-data">
                     <div class="input-sect">
                         <div id="upload-div">
-                            <!-- <input id="upload" type="file" name="file" accept=".pdf" required hidden>
-                            <label for="upload" id="upload-label" class="custom-button">Upload File</label>
-                            <span id="file-name" class="file-name">No file uploaded</span> -->
-                            <!-- <script>
-                                document.getElementById('upload').addEventListener('change', function() {
-                                    const fileLabel = document.getElementById('file-name');
-                                    if (this.files.length > 0) {
-                                        fileLabel.textContent = this.files[0].name;
-                                    } else {
-                                        fileLabel.textContent = 'No file uploaded';
-                                    }
-                                });
-                            </script> -->
-                            <input type="file" name="file" accept=".pdf" required>
+                            <input id="upload-button" type="file" name="file" accept=".pdf" required>
                         </div>
                         <button id="submit" type="submit">Upload and Split</button>
                     </div>
