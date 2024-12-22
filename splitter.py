@@ -114,7 +114,7 @@ def get_page_offset(reader):
                 continue
 
             # Check for numeric-only lines (potential page numbers)
-            if line.isdigit():
+            if line.isdigit() and int(line) >= 1:
                 physical_page = int(line)
                 offset = n - (physical_page - 1)
                 return offset

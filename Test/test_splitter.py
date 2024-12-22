@@ -75,7 +75,7 @@ def test_get_page_offset_comp():
     path_file = "test-pdfs/Comp.pdf"
     reader = splitter.get_file(path_file)
     offset = splitter.get_page_offset(reader)
-    assert offset == 25     # or maybe 23 but probs 24
+    assert offset == 24     # or maybe 23 but probs 24
 
 def test_find_chapter_pages_se():
     path_file = "test-pdfs/SE.pdf"
