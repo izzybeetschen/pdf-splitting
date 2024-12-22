@@ -24,6 +24,11 @@ def test_get_file_not_pdf():
     with pytest.raises(ValueError):
         splitter.get_file(path_file)
 
+def test_get_file_comp():
+    file_path = "test-pdfs/Comp.pdf"
+    reader = splitter.get_file(file_path)
+    assert isinstance(reader, PdfReader)
+
 def test_find_index_page_ds():
     path_file = "test-pdfs/DS.pdf"
     reader = splitter.get_file(path_file)
@@ -42,6 +47,12 @@ def test_find_index_page_os():
     page = splitter.find_index_page(reader)
     assert page == 10
 
+def test_find_index_page_comp():
+    path_file = "test-pdfs/Comp.pdf"
+    reader = splitter.get_file(path_file)
+    page = splitter.find_index_page(reader)
+    assert page == 6
+
 def test_get_page_offset_se():
     path_file = "test-pdfs/SE.pdf"
     reader = splitter.get_file(path_file)
@@ -59,6 +70,12 @@ def test_get_page_offset_os():
     reader = splitter.get_file(path_file)
     offset = splitter.get_page_offset(reader)
     assert offset == 22
+
+def test_get_page_offset_comp():
+    path_file = "test-pdfs/Comp.pdf"
+    reader = splitter.get_file(path_file)
+    offset = splitter.get_page_offset(reader)
+    assert offset == 25     # or maybe 23 but probs 24
 
 def test_find_chapter_pages_se():
     path_file = "test-pdfs/SE.pdf"
@@ -181,6 +198,27 @@ def test_find_chapter_pages_os():
         "50": str(639 + offset),
         "51": str(653 + offset)
     }
+
+def test_find_chapter_pages_comp():
+    path_file = "test-pdfs/Comp.pdf"
+    reader = splitter.get_file(path_file)
+    offset = splitter.get_page_offset(reader)
+    page = splitter.find_index_page(reader)
+    chapters = splitter.find_chapter_pages(reader, page, offset)
+    print(chapters)
+    assert chapters == {
+        "0": str(1 + offset),
+        "1": str(31 + offset),
+        "2": str(101 + offset),
+        "3": str(165 + offset),
+        "4": str(193 + offset),
+        "5": str(215 + offset),
+        "6": str(245 + offset),
+        "7": str(275 + offset),
+        "8": str(331 + offset),
+        "9": str(363 + offset),
+        "10": str(393 + offset)
+     }
 
 # Mock PDF creation helper
 def create_mock_pdf(page_count):

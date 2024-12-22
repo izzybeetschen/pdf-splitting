@@ -87,41 +87,38 @@ def get_page_offset(reader):
         IndexError: raised if no text is found on the given page
     """
     offset = None
-    # loop through all the pages in the textbook
+
+    # Patterns to filter out irrelevant lines
+    irrelevant_patterns = [
+        r"copyright",       # Matches "copyright"
+        r"ptg\d+",          # Matches lines like "ptg8286261"
+        r"all rights reserved"  # Common metadata line
+    ]
+
     for n in range(len(reader.pages)):
         page = reader.pages[n]
-        page_text = page.extract_text()
-        lines = page_text.splitlines()
-
-        # read the bottom line of text on the page
-        try:
-            bottom_text = lines[-1].strip()
-        except IndexError:
-            bottom_text = "No text found"
+        text = page.extract_text()
+        if not text:
             continue
-        
-        # if the text says 1, the offset is the page number we're on 0-indexed
-        if bottom_text == "1":
-            offset = n
-            return offset
-        # checks to ensure the page isn't past 1, calculates offset from this value
-        elif bottom_text in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-            offset = n - int(bottom_text)
-            return offset
-        
-        # reads the top line of text on the page, removing hidden text
-        try:
-            top_text = next((line.strip() for line in lines if line.strip() != "ptg8286261"), "None")
-        except IndexError:
-            top_text = "No text found"
 
-        # if the text says 1, the offset is again the current page number
-        if top_text == "1":
-            offset = n
-            return offset
-        elif top_text in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-            offset = n - (int(top_text) - 1)
-            return offset
+        lines = text.splitlines()
+
+        # Extract only footer and header lines (first and last few lines)
+        candidate_lines = lines[:5] + lines[-5:]
+
+        for line in candidate_lines:
+            line = line.strip().lower()
+
+            # Skip irrelevant lines
+            if any(re.search(pattern, line) for pattern in irrelevant_patterns):
+                continue
+
+            # Check for numeric-only lines (potential page numbers)
+            if line.isdigit():
+                physical_page = int(line)
+                offset = n - (physical_page - 1)
+                return offset
+
     return offset
 
 def find_chapter_pages(reader, contents, offset):
@@ -158,9 +155,9 @@ def find_chapter_pages(reader, contents, offset):
             # normalises the text in case of bad image reading
             normalized_line = re.sub(r'\s+', ' ', line)
             normalized_line = re.sub(r'(\d)([A-Za-z])', r'\1 \2', normalized_line)
-            normalized_line = re.sub(r'([A-Za-z])(\d)$', r'\1 \2', normalized_line)
-            normalized_line = re.sub(r'(\d)\s+(\d)', r'\1\2', normalized_line)
-
+            normalized_line = re.sub(r'([A-Za-z])(\d)', r'\1 \2', normalized_line)
+            normalized_line = re.sub(r'([A-Za-z])\s+([A-Za-z])', r'\1\2', normalized_line)
+            normalized_line = re.sub(r'(\d+)\s+(\d+)', r'\1\2', normalized_line)
             match = re.search(pattern, normalized_line)
 
             if match:
@@ -172,12 +169,12 @@ def find_chapter_pages(reader, contents, offset):
             # allows multi line reading incase title spans two lines
             elif i + 1 < len(lines):
                 combined_line = line + " " + lines[i + 1].strip()
-                # normalises the text in case of bad image reading
                 normalized_line = re.sub(r'\s+', ' ', combined_line)
                 normalized_line = re.sub(r'(\d)([A-Za-z])', r'\1 \2', normalized_line)
-                normalized_line = re.sub(r'([A-Za-z])(\d)$', r'\1 \2', normalized_line)
-                normalized_line = re.sub(r'(\d)\s+(\d)', r'\1\2', normalized_line)
-
+                normalized_line = re.sub(r'([A-Za-z])(\d)', r'\1 \2', normalized_line)
+                normalized_line = re.sub(r'([A-Za-z])\s+([A-Za-z])', r'\1\2', normalized_line)
+                normalized_line = re.sub(r'(\d+)\s+(\d+)', r'\1\2', normalized_line)
+                
                 match = re.search(pattern, normalized_line)
                 
                 if match:
