@@ -118,7 +118,7 @@ def get_page_offset(reader):
                 physical_page = int(line)
                 offset = n - (physical_page - 1)
                 return offset
-
+  
     return offset
 
 def find_chapter_pages(reader, contents, offset):
@@ -164,6 +164,7 @@ def find_chapter_pages(reader, contents, offset):
                 chapter_found = True
                 chapter_no, chapter_page = match.groups()
                 chapter_page = int(chapter_page) + int(offset)
+                print(f"Chapter {chapter_no}: Found on contents page {int(chapter_page) - int(offset)} → Adjusted to {chapter_page}")
                 chapters.update({str(chapter_no): str(chapter_page)})
 
             # allows multi line reading incase title spans two lines
@@ -181,6 +182,7 @@ def find_chapter_pages(reader, contents, offset):
                     chapter_found = True
                     chapter_no, chapter_page = match.groups()
                     chapter_page = int(chapter_page) + int(offset)
+                    print(f"Chapter {chapter_no}: Found on contents page {int(chapter_page) - int(offset)} → Adjusted to {chapter_page}")
                     chapters.update({str(chapter_no): str(chapter_page)})
 
         # if no chapter info found on the current page, assume contents section is finished
@@ -210,7 +212,8 @@ def split_by_chapter(reader, chapter):
         for i, (chapter_number, start_page) in enumerate(chapter_list):
             # checks to ensure the start page is valid
             if start_page >= len(reader.pages):
-                raise IndexError
+                # print(f"Error: start_page {start_page} is out of bounds (PDF has {len(reader.pages)} pages)")
+                continue
             
             # create a PDF writer
             writer = PdfWriter()
@@ -218,13 +221,23 @@ def split_by_chapter(reader, chapter):
             # if the chapter is not the final chapter, find the page the chapter ends on
             if i + 1 < len(chapter_list):
                 end_page = chapter_list[i + 1][1]
-            # if it is, the end page is the end of the textbook
             else:
-                end_page = len(reader.pages) + 1
+                end_page = len(reader.pages)  # Set to the last page if it's the last chapter
 
-            # add each page of the chapter to the PDF
+            # Ensure end_page does not exceed the total number of pages
+            if end_page > len(reader.pages):
+                # print(f"Warning: end_page {end_page} exceeds PDF pages, adjusting to {len(reader.pages)}")
+                end_page = len(reader.pages)
+
+            # Add each page of the chapter to the PDF
+            # print(f"Splitting Chapter {chapter_number}: Expected start page {start_page}")
+            # print(f"Splitting chapter {chapter_number}: pages {start_page} to {end_page - 1}")  # Debugging
+
             for page_num in range(start_page, end_page):
-                writer.add_page(reader.pages[page_num - 1])
+                if page_num >= len(reader.pages):  # Check that page_num is within range
+                    # print(f"Error: page_num {page_num} exceeds available pages")
+                    continue
+                writer.add_page(reader.pages[page_num])
 
             # Write PDF to buffer
             pdf_buffer = BytesIO()
@@ -234,8 +247,9 @@ def split_by_chapter(reader, chapter):
             # Add PDF to ZIP
             zip_file.writestr(f'chapter_{chapter_number}.pdf', pdf_buffer.read())
 
-    zip_buffer.seek(0) 
+    zip_buffer.seek(0)
     return zip_buffer
+
 
 # def main():
 #     file_path = "test-pdfs/SE.pdf"
