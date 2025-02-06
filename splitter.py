@@ -92,7 +92,7 @@ def get_page_offset(reader):
     irrelevant_patterns = [
         r"copyright",       # Matches "copyright"
         r"ptg\d+",          # Matches lines like "ptg8286261"
-        r"all rights reserved"  # Common metadata line
+        r"all rights reserved"      # Common metadata line
     ]
 
     for n in range(len(reader.pages)):
@@ -142,6 +142,7 @@ def find_chapter_pages(reader, contents, offset):
         page = reader.pages[current_page]
         text = page.extract_text()
 
+        # if the page is empty, go to the next page
         if not text:
             current_page += 1
             continue
@@ -152,7 +153,7 @@ def find_chapter_pages(reader, contents, offset):
 
         for i, line in enumerate(lines):
             line = line.strip()
-            # normalises the text in case of bad image reading
+            # normalises the text in case of bad image reading (pain)
             normalized_line = re.sub(r'\s+', ' ', line)
             normalized_line = re.sub(r'(\d)([A-Za-z])', r'\1 \2', normalized_line)
             normalized_line = re.sub(r'([A-Za-z])(\d)', r'\1 \2', normalized_line)
